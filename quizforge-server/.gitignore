@@ -31,6 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-
+.env
 src/test/
 src/main/resources/application-*.yml
