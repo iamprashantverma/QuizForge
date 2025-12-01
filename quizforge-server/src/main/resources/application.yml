@@ -1,0 +1,6 @@
+spring:
+    application:
+        name: QuizForge Server
+    profiles:
+        active: dev
+
