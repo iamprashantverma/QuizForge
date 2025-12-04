@@ -1,11 +1,11 @@
 package com.prashant.quizforge.server.advice;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-
 public class APIResponse <T>{
     private T data;
     private APIError error;

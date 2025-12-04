@@ -6,6 +6,7 @@ import com.prashant.quizforge.server.exception.UserAlreadyExistsException;
 import com.prashant.quizforge.server.exception.UserNotFoundException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -52,15 +55,20 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.GATEWAY_TIMEOUT, "Cloudinary network timeout or connectivity issue.");
     }
 
-    //VALIDATION
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<APIResponse<?>> handleValidationErrors(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(err -> String.format("[%s: %s]", err.getField(), err.getDefaultMessage()))
-                .reduce((a, b) -> a + " " + b)
-                .orElse("Validation failed.");
-        log.warn("Validation failed: {}", message);
-        return buildResponse(HttpStatus.BAD_REQUEST, message);
+    public ResponseEntity<APIResponse<?>> handleInvalidMethodArgument(MethodArgumentNotValidException ex) {
+        // Extract only the default messages from the validation errors
+        List<String> errors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        APIError apiError = APIError.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(String.join(", ", errors))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new APIResponse<>(apiError));
     }
 
     // GENERIC FALLBACK
