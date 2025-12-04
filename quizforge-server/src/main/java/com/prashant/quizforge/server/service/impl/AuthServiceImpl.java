@@ -10,6 +10,7 @@ import com.prashant.quizforge.server.exception.UserAlreadyExistsException;
 import com.prashant.quizforge.server.exception.UserNotFoundException;
 import com.prashant.quizforge.server.repositoriy.UserRepository;
 import com.prashant.quizforge.server.service.AuthService;
+import com.prashant.quizforge.server.service.JWTService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JWTService jwtService;
 
     @Override
     public UserResponseDTO signUp(UserCreateDTO userCreateDTO) {
@@ -55,8 +57,15 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new InvalidCredentialsException("Invalid password");
         }
+        // generate the tokens to fulfill next requests
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
-        return LoginResponseDTO.builder().build();
+        return  LoginResponseDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
     }
 
     private User convertToEntity(UserCreateDTO userCreateDTO) {
