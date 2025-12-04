@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
                     throw new UserAlreadyExistsException("Email already registered: " + userCreateDTO.getEmail());
                 });
         User toBeCreated = convertToEntity(userCreateDTO);
+
         // hash the plain text and store in the DB
         String hashPassword =  passwordEncoder.encode(toBeCreated.getPassword());
         toBeCreated.setPassword(hashPassword);

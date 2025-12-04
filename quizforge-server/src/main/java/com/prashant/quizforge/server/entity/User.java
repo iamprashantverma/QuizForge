@@ -23,13 +23,13 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.STUDENT;
 
     @Column(unique = true, nullable = false, length = 20)
     private String email;
 
     @Column(nullable = false)
-    private Boolean active;
+    private Boolean active = Boolean.TRUE;
 
     @Column(length = 13)
     private String phoneNumber;
@@ -39,7 +39,8 @@ public class User implements UserDetails {
 
     private String profilePictureUrl;
 
-    private Boolean emailVerified;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private Boolean emailVerified = false;
 
     @Override
     public boolean isEnabled() {

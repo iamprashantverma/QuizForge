@@ -28,7 +28,5 @@ public class UserCreateDTO {
     @Size(max = 13, message = "Phone number can be maximum 13 characters")
     private String phoneNumber;
 
-    @Size(max = 255, message = "Profile picture URL is too long")
-    private String profilePictureUrl;
 
 }
