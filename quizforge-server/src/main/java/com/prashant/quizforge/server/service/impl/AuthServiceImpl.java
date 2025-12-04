@@ -5,6 +5,7 @@ import com.prashant.quizforge.server.dto.LoginResponseDTO;
 import com.prashant.quizforge.server.dto.UserCreateDTO;
 import com.prashant.quizforge.server.dto.UserResponseDTO;
 import com.prashant.quizforge.server.entity.User;
+import com.prashant.quizforge.server.exception.InvalidCredentialsException;
 import com.prashant.quizforge.server.exception.UserAlreadyExistsException;
 import com.prashant.quizforge.server.exception.UserNotFoundException;
 import com.prashant.quizforge.server.repositoriy.UserRepository;
@@ -12,6 +13,7 @@ import com.prashant.quizforge.server.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -22,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDTO signUp(UserCreateDTO userCreateDTO) {
@@ -32,8 +35,10 @@ public class AuthServiceImpl implements AuthService {
                     throw new UserAlreadyExistsException("Email already registered: " + userCreateDTO.getEmail());
                 });
         User toBeCreated = convertToEntity(userCreateDTO);
+        // hash the plain text and store in the DB
+        String hashPassword =  passwordEncoder.encode(toBeCreated.getPassword());
+        toBeCreated.setPassword(hashPassword);
 
-        // hash The password later before saving into the DB
         User savedUser = userRepository.save(toBeCreated);
 
         return convertToUserDTO(savedUser);
@@ -46,6 +51,10 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UserNotFoundException(
                         "User not registered with email: " + loginRequestDTO.getEmail()
                 ));
+        String password = loginRequestDTO.getPassword();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid password");
+        }
 
         return LoginResponseDTO.builder().build();
     }

@@ -16,3 +16,5 @@ spring:
                         enable: true
                     ssl:
                         trust: smtp.gmail.com
+jwt:
+    secretKey: YourSuperSecretKeyForJWTs12345678901234567890
