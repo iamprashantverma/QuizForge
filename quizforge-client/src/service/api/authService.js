@@ -1,11 +1,9 @@
-import axios from "axios";
+import api from "./api";
 
-const BASE_URL = import.meta.env.BASE_URL;
+export const signUp = (data) => {
+  return api.post("/auth/signup", data);
+};
 
-const api = axios.create({
-    baseURL:BASE_URL,
-    timeout:5000,
-    headers: {
-    'Content-Type': 'application/json'
-  },
-})
+export const login = (data)=>{
+  return api.post("/auth/login",data);
+}
