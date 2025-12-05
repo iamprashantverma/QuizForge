@@ -5,6 +5,8 @@ import com.prashant.quizforge.server.entity.enums.Difficulty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -25,9 +27,6 @@ public class Quiz {
     private String description;
 
     @Column(nullable = false)
-    private Long totalQuestions;
-
-    @Column(nullable = false)
     private Integer timeLimit;
 
     @Enumerated(EnumType.STRING)
@@ -35,9 +34,11 @@ public class Quiz {
     private Difficulty difficulty;
 
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

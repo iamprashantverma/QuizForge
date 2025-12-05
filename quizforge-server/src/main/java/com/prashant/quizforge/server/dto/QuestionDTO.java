@@ -37,10 +37,6 @@ public class QuestionDTO {
     @Min(value = 0, message = "Marks cannot be negative")
     private Integer marks;
 
-    @NotNull(message = "Question number is required")
-    @Min(value = 1, message = "Question number must be at least 1")
-    private Integer questionNumber;
-
     private String explanation;
 
     private Long quizId;

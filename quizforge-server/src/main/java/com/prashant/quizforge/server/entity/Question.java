@@ -37,10 +37,6 @@ public class Question {
     @Column(nullable = false, columnDefinition = "INT CHECK (marks >= 0)")
     private Integer marks;
 
-    @NotNull
-    @Column(nullable = false)
-    private Integer questionNumber;
-
     private String explanation;
 
     @ManyToOne(fetch = FetchType.LAZY)

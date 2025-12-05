@@ -19,10 +19,6 @@ public class QuizDTO {
     @Size(max = 500, message = "Description must be at most 500 characters")
     private String description;
 
-    @NotNull(message = "Total questions are required")
-    @Min(value = 1, message = "There must be at least 1 question")
-    private Long totalQuestions;
-
     @NotNull(message = "Time limit is required")
     @Min(value = 1, message = "Time limit must be at least 1 minute")
     private Integer timeLimit;
@@ -31,7 +27,7 @@ public class QuizDTO {
     private Difficulty difficulty;
 
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
-    private Set<QuestionDTO> questions;
 }

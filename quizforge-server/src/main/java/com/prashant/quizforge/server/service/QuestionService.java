@@ -46,7 +46,7 @@ public interface QuestionService {
      * @param pageNo pagination information
      * @return a page of QuestionDTOs
      */
-    List<QuestionDTO> getQuestionsByQuizId(Long quizId, Integer pageNo);
+    Page<QuestionDTO> getQuestionsByQuizId(Long quizId, Integer pageNo);
 
     /**
      * Deletes a question by its ID.

@@ -14,9 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,6 +29,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final static Integer PAGE_SIZE = 10;
 
     @Override
+    @Transactional
     public QuestionDTO createQuestion(Long quizId, QuestionDTO questionDTO) {
         log.info("Creating question for quizId={}", quizId);
         Quiz quiz = getQuizById(quizId);
@@ -42,6 +42,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public QuestionDTO updateQuestion(Long questionId, QuestionDTO questionDTO) {
 
         log.info("Updating question with id={}", questionId);
@@ -72,20 +73,22 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionDTO> getQuestionsByQuizId(Long quizId, Integer pageNo) {
+    public Page<QuestionDTO> getQuestionsByQuizId(Long quizId, Integer pageNo) {
         log.info("Fetching questions for quizId={} at pageNo={}", quizId, pageNo);
         Quiz quiz = getQuizById(quizId);
+
         Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE);
+        // Fetch paginated questions
         Page<Question> questionPage = questionRepository.findByQuizId(quizId, pageable);
-        List<QuestionDTO> questionDTOs = questionPage.getContent()
-                .stream()
-                .map(this::convertToDTO)
-                .toList();
-        log.info("Fetched {} questions for quizId={} at pageNo={}", questionDTOs.size(), quizId, pageNo);
-        return questionDTOs;
+        // Map each Question to QuestionDTO while preserving pagination
+        Page<QuestionDTO> questionDTOPage = questionPage.map(this::convertToDTO);
+
+        log.info("Fetched {} questions for quizId={} at pageNo={}", questionDTOPage.getNumberOfElements(), quizId, pageNo);
+        return questionDTOPage;
     }
 
     @Override
+    @Transactional
     public QuestionDTO deleteQuestion(Long questionId) {
         log.info("Deleting question with id={}", questionId);
         Question existingQuestion = questionRepository.findById(questionId).orElseThrow(()->

@@ -2,6 +2,7 @@ package com.prashant.quizforge.server.advice;
 
 
 import com.prashant.quizforge.server.exception.InvalidCredentialsException;
+import com.prashant.quizforge.server.exception.ResourceNotFoundException;
 import com.prashant.quizforge.server.exception.UserAlreadyExistsException;
 import com.prashant.quizforge.server.exception.UserNotFoundException;
 import io.jsonwebtoken.JwtException;
@@ -22,10 +23,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // USER EXCEPTIONS
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<APIResponse<?>> handleUserNotFound(UserNotFoundException ex) {
         log.warn("User not found: {}", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<APIResponse<?>> handleResourcesNotFound(ResourceNotFoundException ex) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
@@ -71,7 +76,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new APIResponse<>(apiError));
     }
 
-    // GENERIC FALLBACK
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse<?>> handleGenericException(Exception ex) {
         log.error("Unhandled exception: {}", ex.getMessage(), ex);

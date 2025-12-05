@@ -8,6 +8,7 @@ import com.prashant.quizforge.server.service.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequestMapping("/teacher")
 @RequiredArgsConstructor
 @Slf4j
-public class AdminController {
+public class TeacherController {
 
     private final AdminService adminService;
     private final QuizService quizService;
@@ -78,8 +79,8 @@ public class AdminController {
 
     // get questions by their quizId
     @GetMapping("/quizzes/{quizId}/questions")
-    public ResponseEntity<List<QuestionDTO>> getQuestionsByQuizId(@PathVariable Long quizId, @RequestParam(defaultValue = "0") Integer pageNo) {
-        List<QuestionDTO> questions = questionService.getQuestionsByQuizId(quizId, pageNo);
+    public ResponseEntity<Page<QuestionDTO>> getQuestionsByQuizId(@PathVariable Long quizId, @RequestParam(defaultValue = "0") Integer pageNo) {
+        Page<QuestionDTO> questions = questionService.getQuestionsByQuizId(quizId, pageNo);
         return ResponseEntity.ok(questions);
     }
 

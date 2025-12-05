@@ -56,7 +56,7 @@ public class JWTServiceImpl implements JWTService {
                 .parseSignedClaims(token)
                 .getPayload();
 
-        return claims.getSubject();
+        return claims.get("email",String.class);
     }
 
 }
