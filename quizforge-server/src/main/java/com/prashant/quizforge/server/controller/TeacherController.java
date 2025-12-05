@@ -2,7 +2,6 @@ package com.prashant.quizforge.server.controller;
 
 import com.prashant.quizforge.server.dto.QuestionDTO;
 import com.prashant.quizforge.server.dto.QuizDTO;
-import com.prashant.quizforge.server.service.AdminService;
 import com.prashant.quizforge.server.service.QuestionService;
 import com.prashant.quizforge.server.service.QuizService;
 import jakarta.validation.Valid;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/teacher")
@@ -21,7 +19,6 @@ import java.util.List;
 @Slf4j
 public class TeacherController {
 
-    private final AdminService adminService;
     private final QuizService quizService;
     private final QuestionService questionService;
 
@@ -48,9 +45,7 @@ public class TeacherController {
 
     // Create new question under a quiz
     @PostMapping("/quizzes/{quizId}/questions")
-    public ResponseEntity<QuestionDTO> createQuestion(
-            @PathVariable Long quizId,
-            @Valid @RequestBody QuestionDTO questionDTO) {
+    public ResponseEntity<QuestionDTO> createQuestion(@PathVariable Long quizId, @Valid @RequestBody QuestionDTO questionDTO) {
 
         QuestionDTO savedQuestion = questionService.createQuestion(quizId, questionDTO);
         return new ResponseEntity<>(savedQuestion, HttpStatus.CREATED);

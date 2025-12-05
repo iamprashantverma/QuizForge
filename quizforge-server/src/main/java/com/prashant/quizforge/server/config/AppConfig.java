@@ -11,12 +11,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class AppConfig {
-    @Value("${cloudinary.cloud-name}")
-    private String cloudName;
-    @Value("${cloudinary.api-key}")
-    private String apiKey;
-    @Value("${cloudinary.api-secret}")
-    private String apiSecret;
+
+    private final String cloudName;
+    private final String apiKey;
+    private final String apiSecret;
+
+    public AppConfig(
+            @Value("${cloudinary.cloud-name}") String cloudName,
+            @Value("${cloudinary.api-key}") String apiKey,
+            @Value("${cloudinary.api-secret}") String apiSecret) {
+        this.cloudName = cloudName;
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
+    }
 
     @Bean
     public Cloudinary cloudinary() {
@@ -26,14 +33,14 @@ public class AppConfig {
                 "api_secret", apiSecret
         ));
     }
+
     @Bean
-    public ModelMapper getModelMapper() {
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
     @Bean
-    public PasswordEncoder getPasswordEncoder(){
-        return  new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
-
 }
