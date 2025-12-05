@@ -2,9 +2,7 @@ package com.prashant.quizforge.server.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Service interface for handling image uploads to Cloudinary.
- */
+
 public interface CloudinaryService {
 
     /**

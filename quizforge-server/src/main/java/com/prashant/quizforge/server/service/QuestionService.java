@@ -3,14 +3,9 @@ package com.prashant.quizforge.server.service;
 import com.prashant.quizforge.server.dto.QuestionDTO;
 import com.prashant.quizforge.server.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
 
-/**
- * Service interface for managing Question entities and their association with quizzes.
- */
+
 public interface QuestionService {
 
     /**

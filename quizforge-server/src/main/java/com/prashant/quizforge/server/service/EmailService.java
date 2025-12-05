@@ -2,10 +2,7 @@ package com.prashant.quizforge.server.service;
 
 import com.prashant.quizforge.server.exception.EmailSendingException;
 
-/**
- * Service interface for sending emails.
- * Implementations can use SMTP, JavaMail, or third-party providers.
- */
+
 public interface EmailService {
 
     /**

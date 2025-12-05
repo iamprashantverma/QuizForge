@@ -6,9 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-/**
- * Service interface for managing users.
- */
+
 public interface UserService {
 
     /**

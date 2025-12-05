@@ -84,6 +84,4 @@ public class TeacherController {
         return ResponseEntity.ok(questions);
     }
 
-
-
 }
