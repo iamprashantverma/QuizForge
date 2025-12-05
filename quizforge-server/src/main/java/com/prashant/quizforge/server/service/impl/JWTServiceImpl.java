@@ -6,7 +6,6 @@ import com.prashant.quizforge.server.service.JWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,9 +28,10 @@ public class JWTServiceImpl implements JWTService {
 
     public String generateAccessToken(User user) {
         return Jwts.builder()
-                .subject(user.getEmail())
+                .subject(String.valueOf(user.getId()))
                 .claim("email",user.getEmail())
                 .claim("name",user.getName())
+                .claim("role",user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000*60*60*15))
                 .signWith(getSecretKey())

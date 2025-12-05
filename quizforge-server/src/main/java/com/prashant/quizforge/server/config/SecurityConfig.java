@@ -36,6 +36,8 @@ public class SecurityConfig {
     @Value("${frontend-url}")
     private String frontendUrl;
 
+    private final static String[] publicUrls ={"/auth/*"};
+
     @PostConstruct
     public void logFrontendUrl() {
         log.info(" Loaded Frontend URLs: {}", frontendUrl);
@@ -59,7 +61,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req->req
-                        .requestMatchers("/auth/*").permitAll()
+                        .requestMatchers(publicUrls).permitAll()
                         .requestMatchers("/admin/*").hasRole(String.valueOf(ADMIN))
                         .requestMatchers("/user/*").hasRole(String.valueOf(STUDENT))
                         .anyRequest().permitAll())
