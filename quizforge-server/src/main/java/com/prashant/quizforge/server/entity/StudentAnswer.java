@@ -13,7 +13,7 @@ public class StudentAnswer {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_quiz_att_id")
+    @JoinColumn(name = "student_quiz_att_id")
     @ToString.Exclude
     private StudentQuizAttempt studentQuizAttempt;
 

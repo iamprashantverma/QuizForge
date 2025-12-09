@@ -69,6 +69,13 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(QuizNotFinishedException.class)
+    public ResponseEntity<APIResponse<?>> handleQuizNotFinished(QuizNotFinishedException ex) {
+        log.warn("Quiz not finished: {}", ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIResponse<?>> handleInvalidMethodArgument(MethodArgumentNotValidException ex) {

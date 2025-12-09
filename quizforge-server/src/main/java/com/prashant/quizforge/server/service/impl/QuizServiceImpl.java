@@ -1,10 +1,12 @@
 package com.prashant.quizforge.server.service.impl;
 
+import com.prashant.quizforge.server.dto.QuestionDTO;
 import com.prashant.quizforge.server.dto.QuizDTO;
 import com.prashant.quizforge.server.dto.StudentAnswerDTO;
 import com.prashant.quizforge.server.dto.StudentQuizAttemptDTO;
 import com.prashant.quizforge.server.entity.*;
 import com.prashant.quizforge.server.exception.DuplicateActionException;
+import com.prashant.quizforge.server.exception.QuizNotFinishedException;
 import com.prashant.quizforge.server.exception.QuizTimeOverException;
 import com.prashant.quizforge.server.exception.ResourceNotFoundException;
 import com.prashant.quizforge.server.repositoriy.QuestionRepository;
@@ -21,6 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -81,8 +88,8 @@ public class QuizServiceImpl implements QuizService {
     @Transactional
     public StudentQuizAttemptDTO startQuiz(Long quizId) {
        User user = userService.getCurrentUser();
-       Quiz quiz = quizRepository.findById(quizId).orElseThrow(()->
-           new ResourceNotFoundException("Invalid quizId: "+ quizId));
+
+       Quiz quiz = getQuizEntityById(quizId);
 
        boolean alreadyStarted = quizAttemptRepository.findByQuizAndUser(quiz, user).isPresent();
        if (alreadyStarted) {
@@ -108,8 +115,7 @@ public class QuizServiceImpl implements QuizService {
         Question question = questionRepository.findById(questionId).orElseThrow(() ->
                 new ResourceNotFoundException("Invalid question id: " + questionId));
 
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->
-                new ResourceNotFoundException("Invalid quiz id: " + quizId));
+        Quiz quiz = getQuizEntityById(quizId);
 
         User user = userService.getCurrentUser();
 
@@ -144,8 +150,61 @@ public class QuizServiceImpl implements QuizService {
         return modelMapper.map(savedAnswer, StudentAnswerDTO.class);
     }
 
+    @Override
+    public StudentQuizAttemptDTO getMarksForQuiz(Long quizId) {
+        Quiz quiz = getQuizEntityById(quizId);
+        User user = userService.getCurrentUser();
+
+        // Find quiz attempt for the current user
+        StudentQuizAttempt quizAttempt = quizAttemptRepository
+                .findByQuizAndUser(quiz, user)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No quiz attempt found for user " + user.getEmail() + " and quiz " + quizId
+                ));
+
+        // Check if quiz is finished
+        if (quizAttempt.getFinishedAt().isAfter(LocalDateTime.now())) {
+            throw new QuizNotFinishedException("Quiz is not finished yet.");
+        }
+
+        return  modelMapper.map(quizAttempt,StudentQuizAttemptDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionDTO> getStudentAnswersForQuiz(Long quizId) {
+        Quiz quiz = getQuizEntityById(quizId);
+        User user = userService.getCurrentUser();
+        StudentQuizAttempt quizAttempt = quizAttemptRepository
+                .findByQuizAndUser(quiz, user)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No quiz attempt found for user " + user.getEmail() + " and quiz " + quizId
+                ));
+
+        // Check if quiz is finished
+        if (quizAttempt.getFinishedAt().isAfter(LocalDateTime.now())) {
+            throw new QuizNotFinishedException("Quiz is not finished yet.");
+        }
+
+        List<StudentAnswer> answersCopy = new ArrayList<>(quizAttempt.getStudentAnswers());
+
+        return answersCopy.stream()
+                .map(answer -> {
+                    QuestionDTO dto = modelMapper.map(answer.getQuestion(), QuestionDTO.class);
+                    dto.setSelectedOption(answer.getSelectedOption());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
     private QuizDTO convertToDTO(Quiz quiz) {
         return modelMapper.map(quiz, QuizDTO.class);
+    }
+
+    private Quiz getQuizEntityById(Long quizId) {
+        return  quizRepository.findById(quizId).orElseThrow(() ->
+                new ResourceNotFoundException("Invalid quiz id: " + quizId));
+
     }
 
     private Quiz convertToEntity(QuizDTO quizDTO) {

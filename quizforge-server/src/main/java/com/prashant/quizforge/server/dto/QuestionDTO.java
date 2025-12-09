@@ -40,4 +40,6 @@ public class QuestionDTO {
     private String explanation;
 
     private Long quizId;
+    // used when  students see their submitted answer
+    private String selectedOption;
 }

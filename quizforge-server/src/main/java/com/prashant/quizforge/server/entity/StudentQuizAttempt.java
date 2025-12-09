@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,6 +33,7 @@ public class StudentQuizAttempt {
     private int score;
 
     @OneToMany(mappedBy = "studentQuizAttempt", cascade = CascadeType.ALL)
-    private Set<StudentAnswer> studentAnswers = new HashSet<>();
+    @ToString.Exclude
+    private List<StudentAnswer> studentAnswers = new ArrayList<>();
 
 }
