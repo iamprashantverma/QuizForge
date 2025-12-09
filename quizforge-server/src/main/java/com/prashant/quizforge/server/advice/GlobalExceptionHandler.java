@@ -1,10 +1,7 @@
 package com.prashant.quizforge.server.advice;
 
 
-import com.prashant.quizforge.server.exception.InvalidCredentialsException;
-import com.prashant.quizforge.server.exception.ResourceNotFoundException;
-import com.prashant.quizforge.server.exception.UserAlreadyExistsException;
-import com.prashant.quizforge.server.exception.UserNotFoundException;
+import com.prashant.quizforge.server.exception.*;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -22,6 +19,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DuplicateActionException.class)
+    public ResponseEntity<APIResponse<?>> handleDuplicateActionException(DuplicateActionException ex) {
+        log.error("Duplication Action exception: {}", ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<APIResponse<?>> handleUserNotFound(UserNotFoundException ex) {
@@ -60,6 +63,13 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.GATEWAY_TIMEOUT, "Cloudinary network timeout or connectivity issue.");
     }
 
+    @ExceptionHandler(QuizTimeOverException.class)
+    public ResponseEntity<APIResponse<?>> handleQuizTimeOver(QuizTimeOverException ex) {
+        log.warn("Quiz time over: {}", ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIResponse<?>> handleInvalidMethodArgument(MethodArgumentNotValidException ex) {
         // Extract only the default messages from the validation errors
@@ -79,9 +89,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse<?>> handleGenericException(Exception ex) {
-        log.error("Unhandled exception: {}", ex.getMessage(), ex);
+        log.error("Unhandled exception: {}", ex.getMessage());
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong: " + ex.getMessage());
     }
+
 
     // Helper method
     private ResponseEntity<APIResponse<?>> buildResponse(HttpStatus status, String message) {
