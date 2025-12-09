@@ -1,10 +1,12 @@
 package com.prashant.quizforge.server.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,6 +31,6 @@ public class StudentQuizAttempt {
     private int score;
 
     @OneToMany(mappedBy = "studentQuizAttempt", cascade = CascadeType.ALL)
-    private Set<StudentAnswer> studentAnswers;
+    private Set<StudentAnswer> studentAnswers = new HashSet<>();
 
 }

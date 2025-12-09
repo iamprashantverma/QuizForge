@@ -1,6 +1,8 @@
 package com.prashant.quizforge.server.service;
 
 import com.prashant.quizforge.server.dto.QuizDTO;
+import com.prashant.quizforge.server.dto.StudentAnswerDTO;
+import com.prashant.quizforge.server.dto.StudentQuizAttemptDTO;
 import com.prashant.quizforge.server.exception.ResourceNotFoundException;
 
 public interface QuizService {
@@ -28,4 +30,8 @@ public interface QuizService {
      * @throws ResourceNotFoundException if the quiz does not exist
      */
     QuizDTO deleteQuiz(Long quizId);
+
+    StudentQuizAttemptDTO startQuiz(Long quizId);
+
+    StudentAnswerDTO submitAnswer(Long quizId, Long questionId, StudentAnswerDTO answerDTO);
 }

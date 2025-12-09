@@ -60,11 +60,12 @@ public class SecurityConfig {
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(req->req
+                .authorizeHttpRequests(req -> req
                         .requestMatchers(publicUrls).permitAll()
-                        .requestMatchers("/admin/*").hasRole(String.valueOf(ADMIN))
-                        .requestMatchers("/user/*").hasRole(String.valueOf(STUDENT))
-                        .anyRequest().permitAll())
+                        .requestMatchers("/teacher/**").hasRole("ADMIN")
+                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .anyRequest().authenticated()
+                )
                 .build();
     }
 

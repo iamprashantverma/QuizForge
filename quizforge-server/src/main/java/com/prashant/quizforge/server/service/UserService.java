@@ -1,6 +1,7 @@
 package com.prashant.quizforge.server.service;
 
 import com.prashant.quizforge.server.dto.StudentResponseDTO;
+import com.prashant.quizforge.server.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,4 +42,6 @@ public interface UserService {
      * @return updated user DTO
      */
     StudentResponseDTO updateEmailVerified(String email, Boolean verified);
+
+    User getCurrentUser();
 }

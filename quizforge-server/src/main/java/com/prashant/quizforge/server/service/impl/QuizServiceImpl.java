@@ -1,16 +1,26 @@
 package com.prashant.quizforge.server.service.impl;
 
 import com.prashant.quizforge.server.dto.QuizDTO;
-import com.prashant.quizforge.server.entity.Quiz;
+import com.prashant.quizforge.server.dto.StudentAnswerDTO;
+import com.prashant.quizforge.server.dto.StudentQuizAttemptDTO;
+import com.prashant.quizforge.server.entity.*;
+import com.prashant.quizforge.server.exception.DuplicateActionException;
+import com.prashant.quizforge.server.exception.QuizTimeOverException;
 import com.prashant.quizforge.server.exception.ResourceNotFoundException;
+import com.prashant.quizforge.server.repositoriy.QuestionRepository;
 import com.prashant.quizforge.server.repositoriy.QuizRepository;
+import com.prashant.quizforge.server.repositoriy.StudentAnswerRepository;
+import com.prashant.quizforge.server.repositoriy.StudentQuizAttemptRepository;
 import com.prashant.quizforge.server.service.QuizService;
+import com.prashant.quizforge.server.service.UserService;
 import com.prashant.quizforge.server.utils.RandomStringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -19,6 +29,10 @@ public class QuizServiceImpl implements QuizService {
 
     private final ModelMapper modelMapper;
     private final QuizRepository quizRepository;
+    private final UserService userService;
+    private final QuestionRepository questionRepository;
+    private final StudentAnswerRepository studentAnswerRepository;
+    private final StudentQuizAttemptRepository quizAttemptRepository;
 
     @Override
     @Transactional
@@ -61,6 +75,73 @@ public class QuizServiceImpl implements QuizService {
         log.info("Successfully deleted quiz with id={}", quizId);
 
         return convertToDTO(quiz);
+    }
+
+    @Override
+    @Transactional
+    public StudentQuizAttemptDTO startQuiz(Long quizId) {
+       User user = userService.getCurrentUser();
+       Quiz quiz = quizRepository.findById(quizId).orElseThrow(()->
+           new ResourceNotFoundException("Invalid quizId: "+ quizId));
+
+       boolean alreadyStarted = quizAttemptRepository.findByQuizAndUser(quiz, user).isPresent();
+       if (alreadyStarted) {
+            throw new DuplicateActionException("You have already started this quiz.");
+       }
+
+       StudentQuizAttempt sqa = new  StudentQuizAttempt();
+       sqa.setQuiz(quiz);
+       sqa.setUser(user);
+       sqa.setStartedAt(LocalDateTime.now());
+       int time = quiz.getTimeLimit();
+       sqa.setFinishedAt(LocalDateTime.now().plusMinutes(time));
+       sqa.setScore(0);
+
+       quizAttemptRepository.save(sqa);
+       return modelMapper.map(sqa,StudentQuizAttemptDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public StudentAnswerDTO submitAnswer(Long quizId, Long questionId, StudentAnswerDTO answerDTO) {
+
+        Question question = questionRepository.findById(questionId).orElseThrow(() ->
+                new ResourceNotFoundException("Invalid question id: " + questionId));
+
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->
+                new ResourceNotFoundException("Invalid quiz id: " + quizId));
+
+        User user = userService.getCurrentUser();
+
+        StudentQuizAttempt quizAttempt = quizAttemptRepository
+                .findByQuizAndUser(quiz, user)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Quiz is not started by the user"));
+
+        // Check time limit
+        if (LocalDateTime.now().isAfter(quizAttempt.getFinishedAt()))
+            throw new QuizTimeOverException("Time is over for this quiz.");
+
+        //  Check duplicate answer
+        boolean alreadyAnswered = studentAnswerRepository
+                .existsByStudentQuizAttemptAndQuestion(quizAttempt, question);
+
+        if (alreadyAnswered) {
+            throw new DuplicateActionException("You have already submitted an answer for this question.");
+        }
+
+        // Create and save new answer
+        StudentAnswer studentAnswer = new StudentAnswer();
+        studentAnswer.setSelectedOption(answerDTO.getSelectedOption());
+        studentAnswer.setCorrect(answerDTO.isCorrect());
+        studentAnswer.setQuestion(question);
+        studentAnswer.setStudentQuizAttempt(quizAttempt);
+
+        StudentAnswer savedAnswer = studentAnswerRepository.save(studentAnswer);
+        if (answerDTO.getSelectedOption().equals(question.getCorrectAnswer()))
+            quizAttempt.setScore(quizAttempt.getScore()+question.getMarks());
+        quizAttemptRepository.save(quizAttempt);
+        return modelMapper.map(savedAnswer, StudentAnswerDTO.class);
     }
 
     private QuizDTO convertToDTO(Quiz quiz) {

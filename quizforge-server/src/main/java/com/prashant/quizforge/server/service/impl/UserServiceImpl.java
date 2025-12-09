@@ -8,6 +8,7 @@ import com.prashant.quizforge.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import org.springframework.stereotype.Service;
@@ -47,6 +48,20 @@ public class UserServiceImpl  implements UserService {
     public UserDetails getUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail).orElseThrow(()->
                  new UserNotFoundException("User not registered with email:"+ userEmail));
+    }
+
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found in database"));
     }
 
 }
