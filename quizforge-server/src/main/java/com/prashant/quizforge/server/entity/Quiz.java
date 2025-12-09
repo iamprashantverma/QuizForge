@@ -20,6 +20,9 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false,unique = true)
+    private String link;
+
     @Column(nullable = false, length = 150)
     private String title;
 

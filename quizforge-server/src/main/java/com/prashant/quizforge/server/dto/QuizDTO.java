@@ -16,6 +16,8 @@ public class QuizDTO {
     @Size(max = 150, message = "Quiz title must be at most 150 characters")
     private String title;
 
+    private String link;
+
     @Size(max = 500, message = "Description must be at most 500 characters")
     private String description;
 

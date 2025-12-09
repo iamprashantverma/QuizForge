@@ -5,6 +5,7 @@ import com.prashant.quizforge.server.entity.Quiz;
 import com.prashant.quizforge.server.exception.ResourceNotFoundException;
 import com.prashant.quizforge.server.repositoriy.QuizRepository;
 import com.prashant.quizforge.server.service.QuizService;
+import com.prashant.quizforge.server.utils.RandomStringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,9 +24,19 @@ public class QuizServiceImpl implements QuizService {
     @Transactional
     public QuizDTO createQuiz(QuizDTO quizDTO) {
         log.info("Request received to create quiz with title='{}'", quizDTO.getTitle());
+
         Quiz quiz = convertToEntity(quizDTO);
+
+        String link;
+        do {
+            link = RandomStringUtil.generateSecureRandomString();
+        } while (quizRepository.existsByLink(link));
+
+        quiz.setLink(link);
+
         Quiz savedQuiz = quizRepository.save(quiz);
         log.info("Successfully created quiz with id={}", savedQuiz.getId());
+
         return convertToDTO(savedQuiz);
     }
 
