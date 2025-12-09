@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Data
-public class UserQuizAttempt {
+public class StudentQuizAttempt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +28,7 @@ public class UserQuizAttempt {
     private LocalDateTime finishedAt;
     private int score;
 
-    @OneToMany(mappedBy = "userQuizAttempt", cascade = CascadeType.ALL)
-    private Set<UserAnswer> userAnswers;
+    @OneToMany(mappedBy = "studentQuizAttempt", cascade = CascadeType.ALL)
+    private Set<StudentAnswer> studentAnswers;
 
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateDTO {
+public class StudentCreateDTO {
 
     @NotBlank(message = "Please enter a valid name!")
     @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")

@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Entity
 @Data
-public class UserAnswer {
+public class StudentAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class UserAnswer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_quiz_att_id")
     @ToString.Exclude
-    private UserQuizAttempt userQuizAttempt;
+    private StudentQuizAttempt studentQuizAttempt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")

@@ -1,6 +1,6 @@
 package com.prashant.quizforge.server.service.impl;
 
-import com.prashant.quizforge.server.dto.UserResponseDTO;
+import com.prashant.quizforge.server.dto.StudentResponseDTO;
 import com.prashant.quizforge.server.entity.User;
 import com.prashant.quizforge.server.exception.UserNotFoundException;
 import com.prashant.quizforge.server.repositoriy.UserRepository;
@@ -24,22 +24,22 @@ public class UserServiceImpl  implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserResponseDTO> getAllActiveUsers() {
+    public List<StudentResponseDTO> getAllActiveUsers() {
         List<User> userList = userRepository.findAll();
         return userList.stream()
                 .filter(User::getActive)
-                .map(k->modelMapper.map(k,UserResponseDTO.class))
+                .map(k->modelMapper.map(k, StudentResponseDTO.class))
                 .toList();
 
     }
 
     @Override
-    public UserResponseDTO updateProfilePicture(String email, MultipartFile image) {
+    public StudentResponseDTO updateProfilePicture(String email, MultipartFile image) {
         return null;
     }
 
     @Override
-    public UserResponseDTO updateEmailVerified(String email, Boolean verified) {
+    public StudentResponseDTO updateEmailVerified(String email, Boolean verified) {
         return null;
     }
 

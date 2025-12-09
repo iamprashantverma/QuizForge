@@ -2,8 +2,8 @@ package com.prashant.quizforge.server.service;
 
 import com.prashant.quizforge.server.dto.LoginRequestDTO;
 import com.prashant.quizforge.server.dto.LoginResponseDTO;
-import com.prashant.quizforge.server.dto.UserCreateDTO;
-import com.prashant.quizforge.server.dto.UserResponseDTO;
+import com.prashant.quizforge.server.dto.StudentCreateDTO;
+import com.prashant.quizforge.server.dto.StudentResponseDTO;
 import jakarta.validation.Valid;
 
 
@@ -20,8 +20,8 @@ public interface AuthService {
     /**
      * Registers a new user in the system.
      *
-     * @param userCreateDTO a validated DTO containing user registration details
+     * @param studentCreateDTO a validated DTO containing user registration details
      * @return UserResponseDTO containing the created user's information
      */
-    UserResponseDTO signUp(@Valid UserCreateDTO userCreateDTO);
+    StudentResponseDTO signUp(@Valid StudentCreateDTO studentCreateDTO);
 }

@@ -2,8 +2,8 @@ package com.prashant.quizforge.server.controller;
 
 import com.prashant.quizforge.server.dto.LoginRequestDTO;
 import com.prashant.quizforge.server.dto.LoginResponseDTO;
-import com.prashant.quizforge.server.dto.UserCreateDTO;
-import com.prashant.quizforge.server.dto.UserResponseDTO;
+import com.prashant.quizforge.server.dto.StudentCreateDTO;
+import com.prashant.quizforge.server.dto.StudentResponseDTO;
 import com.prashant.quizforge.server.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -30,8 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> singUp(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        UserResponseDTO userCreated = authService.signUp(userCreateDTO);
+    public ResponseEntity<StudentResponseDTO> singUp(@Valid @RequestBody StudentCreateDTO studentCreateDTO) {
+        StudentResponseDTO userCreated = authService.signUp(studentCreateDTO);
 
         return new ResponseEntity<>(userCreated, HttpStatus.CREATED);
     }

@@ -2,8 +2,8 @@ package com.prashant.quizforge.server.service.impl;
 
 import com.prashant.quizforge.server.dto.LoginRequestDTO;
 import com.prashant.quizforge.server.dto.LoginResponseDTO;
-import com.prashant.quizforge.server.dto.UserCreateDTO;
-import com.prashant.quizforge.server.dto.UserResponseDTO;
+import com.prashant.quizforge.server.dto.StudentCreateDTO;
+import com.prashant.quizforge.server.dto.StudentResponseDTO;
 import com.prashant.quizforge.server.entity.User;
 import com.prashant.quizforge.server.exception.InvalidCredentialsException;
 import com.prashant.quizforge.server.exception.UserAlreadyExistsException;
@@ -31,14 +31,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public UserResponseDTO signUp(UserCreateDTO userCreateDTO) {
+    public StudentResponseDTO signUp(StudentCreateDTO studentCreateDTO) {
         // Check if user already exists
-        userRepository.findByEmail(userCreateDTO.getEmail())
+        userRepository.findByEmail(studentCreateDTO.getEmail())
                 .ifPresent(u -> {
-                    log.warn("Signup failed: email {} already exists", userCreateDTO.getEmail());
-                    throw new UserAlreadyExistsException("Email already registered: " + userCreateDTO.getEmail());
+                    log.warn("Signup failed: email {} already exists", studentCreateDTO.getEmail());
+                    throw new UserAlreadyExistsException("Email already registered: " + studentCreateDTO.getEmail());
                 });
-        User toBeCreated = convertToEntity(userCreateDTO);
+        User toBeCreated = convertToEntity(studentCreateDTO);
 
         // hash the plain text and store in the DB
         String hashPassword =  passwordEncoder.encode(toBeCreated.getPassword());
@@ -71,12 +71,12 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    private User convertToEntity(UserCreateDTO userCreateDTO) {
-        return  modelMapper.map(userCreateDTO,User.class);
+    private User convertToEntity(StudentCreateDTO studentCreateDTO) {
+        return  modelMapper.map(studentCreateDTO,User.class);
     }
 
-    private UserResponseDTO convertToUserDTO(User user) {
-        return modelMapper.map(user,UserResponseDTO.class);
+    private StudentResponseDTO convertToUserDTO(User user) {
+        return modelMapper.map(user, StudentResponseDTO.class);
     }
 
 }

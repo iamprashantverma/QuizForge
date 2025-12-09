@@ -1,6 +1,6 @@
 package com.prashant.quizforge.server.service;
 
-import com.prashant.quizforge.server.dto.UserResponseDTO;
+import com.prashant.quizforge.server.dto.StudentResponseDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +22,7 @@ public interface UserService {
      *
      * @return list of active users
      */
-    List<UserResponseDTO> getAllActiveUsers();
+    List<StudentResponseDTO> getAllActiveUsers();
 
     /**
      * Update user's profile picture.
@@ -31,7 +31,7 @@ public interface UserService {
      * @param image the new profile picture file
      * @return updated user DTO
      */
-    UserResponseDTO updateProfilePicture(String email, MultipartFile image);
+    StudentResponseDTO updateProfilePicture(String email, MultipartFile image);
 
     /**
      * Update user's email verified status.
@@ -40,5 +40,5 @@ public interface UserService {
      * @param verified the new email verified status
      * @return updated user DTO
      */
-    UserResponseDTO updateEmailVerified(String email, Boolean verified);
+    StudentResponseDTO updateEmailVerified(String email, Boolean verified);
 }
