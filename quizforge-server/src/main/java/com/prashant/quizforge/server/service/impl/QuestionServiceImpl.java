@@ -26,7 +26,6 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuizRepository quizRepository;
     private final ModelMapper modelMapper;
 
-    private final static Integer PAGE_SIZE = 10;
 
     @Override
     @Transactional
@@ -73,11 +72,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<QuestionDTO> getQuestionsByQuizId(Long quizId, Integer pageNo) {
+    public Page<QuestionDTO> getQuestionsByQuizId(Long quizId, Integer pageNo,Integer pageSize) {
         log.info("Fetching questions for quizId={} at pageNo={}", quizId, pageNo);
         Quiz quiz = getQuizById(quizId);
 
-        Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         // Fetch paginated questions
         Page<Question> questionPage = questionRepository.findByQuizId(quizId, pageable);
         // Map each Question to QuestionDTO while preserving pagination

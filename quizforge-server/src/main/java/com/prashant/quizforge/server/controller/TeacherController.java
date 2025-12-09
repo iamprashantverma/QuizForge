@@ -74,8 +74,8 @@ public class TeacherController {
 
     // get questions by their quizId
     @GetMapping("/quizzes/{quizId}/questions")
-    public ResponseEntity<Page<QuestionDTO>> getQuestionsByQuizId(@PathVariable Long quizId, @RequestParam(defaultValue = "0") Integer pageNo) {
-        Page<QuestionDTO> questions = questionService.getQuestionsByQuizId(quizId, pageNo);
+    public ResponseEntity<Page<QuestionDTO>> getQuestionsByQuizId(@PathVariable Long quizId, @RequestParam(defaultValue = "0") Integer pageNo,@RequestParam(defaultValue = "10")Integer pageSize) {
+        Page<QuestionDTO> questions = questionService.getQuestionsByQuizId(quizId, pageNo,pageSize);
         return ResponseEntity.ok(questions);
     }
 
